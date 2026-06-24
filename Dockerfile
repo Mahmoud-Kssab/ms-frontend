@@ -9,10 +9,14 @@ FROM node:20.16.0-alpine AS builder
 
 WORKDIR /app
 
+
+
+ENV NEXT_PUBLIC_API_BASE_URL="https://ms-frontend-production.up.railway.app"
+ENV NEXT_PUBLIC_SOCKET_URL="https://ms-frontend-production.up.railway.app"
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-RUN yarn build
+RUN test -n "$NEXT_PUBLIC_API_BASE_URL" && test -n "$NEXT_PUBLIC_SOCKET_URL" && yarn build
 
 FROM node:20.16.0-alpine AS runner
 
@@ -22,12 +26,9 @@ ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
-COPY package.json yarn.lock .yarnrc ./
-RUN yarn install --frozen-lockfile --production && yarn cache clean
-
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["node", "server.js"]
