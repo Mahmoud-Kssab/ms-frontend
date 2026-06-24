@@ -11,8 +11,8 @@ WORKDIR /app
 
 
 
-ENV NEXT_PUBLIC_API_BASE_URL="https://ms-frontend-production.up.railway.app:8080"
-ENV NEXT_PUBLIC_SOCKET_URL="https://ms-frontend-production.up.railway.app:8080"
+ENV NEXT_PUBLIC_API_BASE_URL="https://ms-backend-production-cc3f.up.railway.app:8080"
+ENV NEXT_PUBLIC_SOCKET_URL="https://ms-backend-production-cc3f.up.railway.app:8080"
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
